@@ -1,32 +1,36 @@
-import React, { useEffect } from "react";
+import React, { CSSProperties } from "react";
 import { useModalState } from "../store";
-import { ModalWrapper, ModalWrapperContext } from "./ModalWrapper";
+import { Modal } from "../types";
+import { ModalProvider } from "./ModalProvider";
 
-export const ModalView: React.FC = () => {
+export const ModalView: React.FC = (props) => {
   const modals = useModalState();
 
-  useEffect(() => console.log("Modals:", modals), [modals])
-
-  const currentModal = React.useMemo(() => {
+  const activeModal = React.useMemo(() => {
     if (modals.length === 0) return null;
     return modals[0];
   }, [modals])
+
+  const ActiveModal = ({ modal }: { modal: Modal }) => {
+    return (
+      <ModalProvider id={modal.id}>
+        {modal.element}
+      </ModalProvider>
+    );
+  }
+
+  const WrappedActiveModal = (): JSX.Element | null => {
+    if (activeModal == null) return null;
+    // if (props.overlap) {
+    //   let reversed = [...modals].reverse();
+    //   return <>{reversed.map(modal => <ActiveModal modal={modal} key={modal.id} />)}</>;
+    // }
+    return <ActiveModal modal={activeModal} />
+  }
   
   return (
     <>
-      {currentModal != null && (
-        <ModalWrapper id={currentModal.id}>
-          {currentModal.element}
-        </ModalWrapper>
-      )}
+      {activeModal != null && <WrappedActiveModal />}
     </>
-    // <>
-    //   {modals.map(modal => (
-    //     <ModalWrapper key={modal.id} id={modal.id}>
-    //       {/* <Modal.Component /> */}
-    //       {modal.element}
-    //     </ModalWrapper>
-    //   ))}
-    // </>
   )
 }

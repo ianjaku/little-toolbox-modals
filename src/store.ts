@@ -14,31 +14,37 @@ export const useModalState = () => {
 
   useEffect(() => {
     setModals(state);
-    console.log("Hello", state)
-    modalEmitter.on("modals", (values) => {
-      console.log("Updating!", values)
-      setModals(values)
-    });
+    modalEmitter.on("modals", setModals);
     return () => modalEmitter.off("modals", setModals);
   }, [setModals])
 
   return modals;
 }
 
-export const showModal = (element: JSX.Element) => {
-  const modal: Modal = { id: ++idCounter, element };
-  state = [modal, ...state];
-  modalEmitter.emit("modals", state);
-
-  // TODO: wait for response
+export const showModal = <T>(element: JSX.Element): Promise<T> => {
+  return new Promise((resolve) => {
+    const modal: Modal = { id: ++idCounter, element, resolve };
+    state = [modal, ...state];
+    modalEmitter.emit("modals", state);
+  });
 }
 
-export const hideModal = (id: number) => {
+export const hideModal = (id: number, result: any = null) => {
+  const modal = state.find(m => m.id === id);
   state = state.filter(modal => modal.id !== id);
   modalEmitter.emit("modals", state);
+  if (modal != null) {
+    modal.resolve(result);
+  }
+}
+
+export const hideActiveModal = (result: any = null) => {
+  if (state.length === 0) return;
+  hideModal(state[0].id, result);
 }
 
 export const hideAllModals = () => {
+  state.forEach(modal => modal.resolve(null));
   state = [];
   modalEmitter.emit("modals", state);
 }

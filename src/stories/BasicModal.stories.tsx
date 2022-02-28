@@ -1,8 +1,8 @@
 import React from 'react';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import { ComponentMeta } from '@storybook/react';
 import "./basicmodal.css";
 
-import { ModalView, showModal, useModalHelpers } from "..";
+import { BasicModalWrapper, ModalView, showModal, useModalHelpers } from "..";
 import { hideAllModals } from '../store';
 
 export default {
@@ -10,13 +10,13 @@ export default {
   component: ModalView
 } as ComponentMeta<typeof ModalView>;
 
-const TestPopup = ({ children = "Default content" }: { children?: JSX.Element | string }) => {
+const TestPopup = ({ children = "Default content", noBg = false, width = 300 }: { children?: JSX.Element | string, noBg?: boolean, width?: number }) => {
   const helpers = useModalHelpers();
   
   return (
     <div className="modal">
-      <div className="modal__bg" onClick={() => helpers.hide()}></div>
-      <div className="modal__content">{children}</div>
+      {!noBg && <div className="modal__bg" onClick={() => helpers.hide()}></div>}
+      <div className="modal__content" style={{ width: `${width}px`}}>{children}</div>
     </div>
   )
 }
@@ -26,6 +26,36 @@ export const WithSimplePopup = () => {
     showModal(<TestPopup />);
   }
   
+  return (
+    <div>
+      <ModalView />
+      <button onClick={show}>Show Modal</button>
+    </div>
+  )
+}
+
+const TextInputModal = ({ children }: { children?: any }) => {
+  const [msg, setMsg] = React.useState("");
+  const helpers = useModalHelpers();
+  const finish = () => helpers.hide(msg);
+  
+  return (
+    <TestPopup>
+      <>
+        <input type="text" value={msg} onInput={e => setMsg((e.target as any).value)} />
+        <button onClick={finish}>Submit</button>
+        {children}
+      </>
+    </TestPopup>
+  )
+}
+
+export const WithResponse = () => {
+  const show = async () => {
+    const result = await showModal(<TextInputModal />)
+    console.log("Result:", result)
+  }
+
   return (
     <div>
       <ModalView />
@@ -45,6 +75,30 @@ export const WithMultiplePopups = () => {
           <div><button onClick={hideAllModals}>Close All</button></div>
         </>
       </TestPopup>
+    )
+  }
+
+  return (
+    <div>
+      <ModalView />
+      <button onClick={show}>Show Modal</button>
+    </div>
+  )
+}
+
+export const Overlapping = () => {
+  let counter = 0;
+  const show = () => {
+    counter++
+    showModal(
+      <BasicModalWrapper>
+        <div style={{ width: `${500 - counter * 50}px`, height: "100px", backgroundColor: "white" }}>
+          Testing - counter
+          <div>
+            <button onClick={show}>Open another</button>
+          </div>
+        </div>
+      </BasicModalWrapper>
     )
   }
 
