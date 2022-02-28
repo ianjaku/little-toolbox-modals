@@ -92,13 +92,16 @@ export const Overlapping = () => {
     counter++
     showModal(
       <BasicModalWrapper>
-        <div style={{ width: `${500 - counter * 50}px`, height: "100px", backgroundColor: "white" }}>
+        <div style={{ width: `${500 - counter * 50}px`, height: "100px", backgroundColor: "lightblue" }}>
           Testing - counter
           <div>
             <button onClick={show}>Open another</button>
           </div>
         </div>
-      </BasicModalWrapper>
+      </BasicModalWrapper>,
+      {
+        overlap: true
+      }
     )
   }
 

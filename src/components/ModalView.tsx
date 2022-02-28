@@ -3,13 +3,27 @@ import { useModalState } from "../store";
 import { Modal } from "../types";
 import { ModalProvider } from "./ModalProvider";
 
-export const ModalView: React.FC = (props) => {
+export const ModalView: React.FC = () => {
   const modals = useModalState();
 
   const activeModal = React.useMemo(() => {
     if (modals.length === 0) return null;
     return modals[0];
   }, [modals])
+
+  const shownModals = React.useMemo(() => {
+    let result: Modal[] = [];
+    for (const modal of modals) {
+      result.push(modal);
+      if (!modal.options.overlap) {
+        break;
+      }
+    }
+    return result;
+  }, [modals])
+  const reversedShownModals = React.useMemo(() => {
+    return [...shownModals].reverse();
+  }, [shownModals])
 
   const ActiveModal = ({ modal }: { modal: Modal }) => {
     return (
@@ -19,18 +33,12 @@ export const ModalView: React.FC = (props) => {
     );
   }
 
-  const WrappedActiveModal = (): JSX.Element | null => {
-    if (activeModal == null) return null;
-    // if (props.overlap) {
-    //   let reversed = [...modals].reverse();
-    //   return <>{reversed.map(modal => <ActiveModal modal={modal} key={modal.id} />)}</>;
-    // }
-    return <ActiveModal modal={activeModal} />
-  }
-  
+  if (activeModal == null) return null;
   return (
     <>
-      {activeModal != null && <WrappedActiveModal />}
+      {reversedShownModals.map(modal => (
+        <ActiveModal modal={modal} key={modal.id} />
+      ))}
     </>
-  )
+  );
 }

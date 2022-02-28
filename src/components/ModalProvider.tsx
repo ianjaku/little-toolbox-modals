@@ -27,7 +27,7 @@ export const useModalHelpers = () => {
   const active = useMemo(() => {
     if (modals.length === 0) return false;
     return modals[0].id === state.id;
-  }, [modals, state])
+  }, [modals, state]);
 
   return {
     hide(result: any = null) {

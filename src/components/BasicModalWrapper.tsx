@@ -35,6 +35,6 @@ export const BasicModalWrapper: React.FC<{
         {props.children}
       </div>
     </div>
-  )
+  );
 }
 
