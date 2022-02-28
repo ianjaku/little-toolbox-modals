@@ -1,7 +1,6 @@
-import { ReactNode } from "react";
+import { ExoticComponent, ReactNode } from "react";
 
 export interface Modal {
   id: number;
-  component: ReactNode;
-  properties?: any;
+  element: JSX.Element;
 }

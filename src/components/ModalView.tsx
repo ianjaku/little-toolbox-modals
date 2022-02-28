@@ -1,32 +1,32 @@
-import mitt from "mitt";
-import React, { useState } from "react";
-// import { useModalState } from "../store";
-import { Modal } from "../types";
-
-// let state: Modal[] = [];
-// export const modalEmitter = mitt<{
-//   modals: Modal[]
-// }>();
+import React, { useEffect } from "react";
+import { useModalState } from "../store";
+import { ModalWrapper, ModalWrapperContext } from "./ModalWrapper";
 
 export const ModalView: React.FC = () => {
-  // const [modals, setModals] = React.useState<Modal[]>([]);
-  const test = useState([]);
+  const modals = useModalState();
 
-  // React.useEffect(() => {
-  //   setModals(state);
-  //   modalEmitter.on("modals", setModals);
-  //   return () => modalEmitter.off("modals", setModals);
-  // }, [setModals])
+  useEffect(() => console.log("Modals:", modals), [modals])
+
+  const currentModal = React.useMemo(() => {
+    if (modals.length === 0) return null;
+    return modals[0];
+  }, [modals])
   
   return (
-    <div className="modal-view">
-      ModalView8:
-      {/* {modals} */}
-      {/* {modals.map(modal => (
-        <div key={modal.id} className="modal">
-          Modal
-        </div>
-      ))} */}
-    </div>
+    <>
+      {currentModal != null && (
+        <ModalWrapper id={currentModal.id}>
+          {currentModal.element}
+        </ModalWrapper>
+      )}
+    </>
+    // <>
+    //   {modals.map(modal => (
+    //     <ModalWrapper key={modal.id} id={modal.id}>
+    //       {/* <Modal.Component /> */}
+    //       {modal.element}
+    //     </ModalWrapper>
+    //   ))}
+    // </>
   )
 }
