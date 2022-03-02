@@ -1,9 +1,18 @@
-import React, { CSSProperties } from "react";
+import React, { CSSProperties, useEffect } from "react";
+import { setModalViewOptions } from "../options";
 import { useModalState } from "../store";
-import { Modal } from "../types";
+import { Modal, ModalOptions } from "../types";
 import { ModalProvider } from "./ModalProvider";
 
-export const ModalView: React.FC = () => {
+export const ModalView: React.FC<{
+  defaultModalOptions?: ModalOptions
+}> = ({ defaultModalOptions }) => {
+  useEffect(() => {
+    if (defaultModalOptions) {
+      setModalViewOptions(defaultModalOptions);
+    }
+  }, [defaultModalOptions]);
+
   const modals = useModalState();
 
   const activeModal = React.useMemo(() => {

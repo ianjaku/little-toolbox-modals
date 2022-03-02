@@ -1,3 +1,3 @@
 # TODO
 
-- Make it possible to pass default options to ModalView
+All required features have been implemented

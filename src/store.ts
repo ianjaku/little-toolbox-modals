@@ -1,5 +1,6 @@
 import mitt from "mitt";
 import { ExoticComponent, ReactNode, useEffect, useState } from "react";
+import { addOptionsDefaults } from "./options";
 import { Modal, ModalOptions, modalOptionsDefaults } from "./types";
 
 export const modalEmitter = mitt<{
@@ -23,7 +24,7 @@ export const useModalState = () => {
 
 export const showModal = <T>(element: JSX.Element, options: ModalOptions = {}): Promise<T> => {
   return new Promise((resolve) => {
-    const optionsWithDefaults = Object.assign(Object.assign({}, modalOptionsDefaults), options);
+    const optionsWithDefaults = addOptionsDefaults(options);
     const modal: Modal = { id: ++idCounter, element, resolve, options: optionsWithDefaults };
     state = [modal, ...state];
     modalEmitter.emit("modals", state);
